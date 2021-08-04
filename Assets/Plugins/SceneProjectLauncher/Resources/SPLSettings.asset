@@ -12,39 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af0024c8210d1e41b2726bbb1ac120d, type: 3}
   m_Name: SPLSettings
   m_EditorClassIdentifier: 
-  NeedOpenSceneOnStart: 1
+  NeedOpenSceneOnStart: 0
   StartSceneName: 0
-  NeedOpenSceneOnStop: 1
-  StopSceneName: 2
+  NeedOpenSceneOnStop: 0
+  StopSceneName: 0
   StartScene:
     SceneName: 0
-    Path: Assets/Scenes/ClientLaunchScene.unity
+    Path: 
     Index: 0
-    Name: ClientLaunchScene
+    Name: 
   StopScene:
-    SceneName: 2
-    Path: Assets/Scenes/ClientGameScene.unity
-    Index: 2
-    Name: ClientGameScene
-  AllScenes:
-  - SceneName: 0
-    Path: Assets/Scenes/ClientLaunchScene.unity
+    SceneName: 0
+    Path: 
     Index: 0
-    Name: ClientLaunchScene
-  - SceneName: 1
-    Path: Assets/Scenes/ClientMenuScene.unity
-    Index: 1
-    Name: ClientMenuScene
-  - SceneName: 2
-    Path: Assets/Scenes/ClientGameScene.unity
-    Index: 2
-    Name: ClientGameScene
-  - SceneName: 3
-    Path: Assets/Scenes/ClientSinglePlayerScene.unity
-    Index: 3
-    Name: ClientSinglePlayerScene
-  - SceneName: 4
-    Path: Assets/Scenes/TutorialScene.unity
-    Index: 4
-    Name: TutorialScene
+    Name: 
+  AllScenes: []
   NeedRefresh: 0

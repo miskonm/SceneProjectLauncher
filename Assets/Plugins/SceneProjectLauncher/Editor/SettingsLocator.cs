@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 namespace SPL
@@ -16,10 +17,13 @@ namespace SPL
                 if (settings == null)
                     settings = Resources.Load<Settings>(SettingsPath);
 
-                if (settings != null) 
+                if (settings != null)
                     return settings;
 
                 settings = ScriptableObject.CreateInstance<Settings>();
+
+                if (!IsResourceFolderExist())
+                    CreateResourceFolder();
 
                 AssetDatabase.CreateAsset(settings, GetPathToDefaultSettings());
                 AssetDatabase.SaveAssets();
@@ -35,7 +39,22 @@ namespace SPL
 
         private static string GetPathToDefaultSettings()
         {
-            return $"{GetPathToFolder()}Resources/{SettingsPath}.asset";
+            return $"{GetPathToResourcesFolder()}/{SettingsPath}.asset";
+        }
+
+        private static string GetPathToResourcesFolder()
+        {
+            return $"{GetPathToFolder()}Resources";
+        }
+
+        private static bool IsResourceFolderExist()
+        {
+            return Directory.Exists(GetPathToResourcesFolder());
+        }
+
+        private static void CreateResourceFolder()
+        {
+            Directory.CreateDirectory(GetPathToResourcesFolder());
         }
 
         private static string GetPathToFolder()
@@ -58,7 +77,7 @@ namespace SPL
                     $"but this needs to be unique to locate the folder.");
             }
 
-            pathToFolder = AssetDatabase.GUIDToAssetPath(guids[0]).Split(new[] {"Editor"},
+            pathToFolder = AssetDatabase.GUIDToAssetPath(guids[0]).Split(new[] { "Editor" },
                 System.StringSplitOptions.RemoveEmptyEntries)[0];
 
             return pathToFolder;
