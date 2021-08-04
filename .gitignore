@@ -70,7 +70,6 @@ sysinfo.txt
 # Builds
 *.apk
 *.aab
-*.unitypackage
 
 
 # Packed Addressables
