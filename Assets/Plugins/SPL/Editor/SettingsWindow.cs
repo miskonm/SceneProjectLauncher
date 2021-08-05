@@ -6,8 +6,8 @@ namespace SPL.Editor
 {
     public class SettingsWindow : EditorWindow
     {
-        [MenuItem("Window/Scene Project Launcher", false, 1000)]
-        [MenuItem("Scene Project Launcher/Settings", false, 1000)]
+        [MenuItem("Tools/SPL/Settings", false, 1000)]
+        // [MenuItem("Scene Project Launcher/Settings", false, 1000)]
         public static void Init()
         {
             SettingsWindow window = GetWindow<SettingsWindow>("Scene Project Launcher");
