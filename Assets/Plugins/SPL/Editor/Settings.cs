@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace SPL
+namespace SPL.Editor
 {
     [CreateAssetMenu(fileName = SettingsLocator.SettingsPath, menuName = "SPL/Settings")]
     public class Settings : ScriptableObject

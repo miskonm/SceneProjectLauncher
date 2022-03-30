@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEditor.SceneManagement;
 
-namespace SPL
+namespace SPL.Editor
 {
     [InitializeOnLoad]
     public class SceneProjectLauncher
@@ -13,7 +13,7 @@ namespace SPL
 
         private static void EditorApplicationOnPlayModeStateChanged(PlayModeStateChange playModeStateChange)
         {
-            var settings = SettingsLocator.Settings;
+            Settings settings = SettingsLocator.Settings;
 
             switch (playModeStateChange)
             {

@@ -2,65 +2,56 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace SPL
+namespace SPL.Editor
 {
-    public class SettingsLocator
+    public static class SettingsLocator
     {
         public const string SettingsPath = "SPLSettings";
-        private static Settings settings;
-        private static string pathToFolder;
+        
+        private static Settings _settings;
+        private static string _pathToFolder;
 
         public static Settings Settings
         {
             get
             {
-                if (settings == null)
-                    settings = Resources.Load<Settings>(SettingsPath);
+                if (_settings == null)
+                    _settings = Resources.Load<Settings>(SettingsPath);
 
-                if (settings != null)
-                    return settings;
+                if (_settings != null)
+                    return _settings;
 
-                settings = ScriptableObject.CreateInstance<Settings>();
+                _settings = ScriptableObject.CreateInstance<Settings>();
 
                 if (!IsResourceFolderExist())
                     CreateResourceFolder();
 
-                AssetDatabase.CreateAsset(settings, GetPathToDefaultSettings());
+                AssetDatabase.CreateAsset(_settings, GetPathToDefaultSettings());
                 AssetDatabase.SaveAssets();
 
-                return settings;
+                return _settings;
             }
         }
 
-        public static string GetPathToScriptsFolder()
-        {
-            return $"{GetPathToFolder()}Editor/";
-        }
+        public static string GetPathToScriptsFolder() =>
+            $"{GetPathToFolder()}Editor/";
 
-        private static string GetPathToDefaultSettings()
-        {
-            return $"{GetPathToResourcesFolder()}/{SettingsPath}.asset";
-        }
+        private static string GetPathToDefaultSettings() =>
+            $"{GetPathToResourcesFolder()}/{SettingsPath}.asset";
 
-        private static string GetPathToResourcesFolder()
-        {
-            return $"{GetPathToFolder()}Resources";
-        }
+        private static string GetPathToResourcesFolder() =>
+            $"{GetPathToFolder()}Resources";
 
-        private static bool IsResourceFolderExist()
-        {
-            return Directory.Exists(GetPathToResourcesFolder());
-        }
+        private static bool IsResourceFolderExist() =>
+            Directory.Exists(GetPathToResourcesFolder());
 
-        private static void CreateResourceFolder()
-        {
+        private static void CreateResourceFolder() =>
             Directory.CreateDirectory(GetPathToResourcesFolder());
-        }
 
         private static string GetPathToFolder()
         {
-            if (!string.IsNullOrEmpty(pathToFolder))
-                return pathToFolder;
+            if (!string.IsNullOrEmpty(_pathToFolder))
+                return _pathToFolder;
 
             string[] guids = AssetDatabase.FindAssets(nameof(SettingsLocator));
 
@@ -77,10 +68,10 @@ namespace SPL
                     $"but this needs to be unique to locate the folder.");
             }
 
-            pathToFolder = AssetDatabase.GUIDToAssetPath(guids[0]).Split(new[] { "Editor" },
+            _pathToFolder = AssetDatabase.GUIDToAssetPath(guids[0]).Split(new[] { "Editor" },
                 System.StringSplitOptions.RemoveEmptyEntries)[0];
 
-            return pathToFolder;
+            return _pathToFolder;
         }
     }
 }

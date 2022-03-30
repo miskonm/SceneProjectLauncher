@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SPL
+namespace SPL.Editor
 {
     [Serializable]
     public struct Scene

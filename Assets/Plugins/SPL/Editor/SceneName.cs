@@ -1,4 +1,4 @@
-namespace SPL
+namespace SPL.Editor
 {
     public enum SceneName
     {

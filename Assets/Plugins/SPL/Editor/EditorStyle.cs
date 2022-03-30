@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
+using UnityEngine;
 
-namespace SPL
+namespace SPL.Editor
 {
     public class EditorStyle
     {

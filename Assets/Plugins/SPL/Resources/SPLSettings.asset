@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af0024c8210d1e41b2726bbb1ac120d, type: 3}
+  m_Name: SPLSettings
+  m_EditorClassIdentifier: 
+  NeedOpenSceneOnStart: 1
+  StartSceneName: 0
+  NeedOpenSceneOnStop: 0
+  StopSceneName: 0
+  StartScene:
+    SceneName: 0
+    Path: Assets/Scenes/SampleScene.unity
+    Index: 0
+    Name: SampleScene
+  StopScene:
+    SceneName: 0
+    Path: Assets/Scenes/SampleScene.unity
+    Index: 0
+    Name: SampleScene
+  AllScenes:
+  - SceneName: 0
+    Path: Assets/Scenes/SampleScene.unity
+    Index: 0
+    Name: SampleScene
+  NeedRefresh: 0
