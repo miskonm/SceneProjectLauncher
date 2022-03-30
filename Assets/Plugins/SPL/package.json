@@ -1,0 +1,12 @@
+{
+    "name": "com.miskonm.spl",
+    "displayName": "SPL",
+    "author": { "name": "miskonm", "url": "https://github.com/miskonm" },
+    "version": "1.0.0",
+    "unity": "2020.3",
+    "description": "Provides simple tool for managing scenes launching in editor.",
+    "keywords": [ "scenes", "SPL"],
+    "license": "MIT",
+    "category": "Tool",
+    "dependencies": {}
+}
