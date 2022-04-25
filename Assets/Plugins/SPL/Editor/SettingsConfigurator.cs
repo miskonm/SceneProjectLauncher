@@ -146,6 +146,9 @@ namespace SPL.Editor
         [DidReloadScripts]
         private static void UpdateScenesAndSet()
         {
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+                return;
+            
             Settings settings = SettingsLocator.Settings;
 
             if (!settings.NeedRefresh)

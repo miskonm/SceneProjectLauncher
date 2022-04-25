@@ -52,10 +52,24 @@ namespace SPL.Editor
 
                     GUILayout.Space(10);
 
-                    if (GUILayout.Button("Recreate Scene Enum", style.MenuButton))
+                    bool isUpdating = EditorApplication.isUpdating;
+                    bool isCompiling = EditorApplication.isCompiling;
+
+                    if (isCompiling)
                     {
-                        if (SettingsConfigurator.Configure())
-                            settings.ResetSceneNames();
+                        GUILayout.Label("Wait a minutes. Project is compiling...", style.Subheading2);
+                    }
+                    else if (isUpdating)
+                    {
+                        GUILayout.Label("Wait a minutes. Project is updating...", style.Subheading2);
+                    }
+                    else
+                    {
+                        if (GUILayout.Button("Recreate Scene Enum", style.MenuButton))
+                        {
+                            if (SettingsConfigurator.Configure())
+                                settings.ResetSceneNames();
+                        }
                     }
                 }
             }
