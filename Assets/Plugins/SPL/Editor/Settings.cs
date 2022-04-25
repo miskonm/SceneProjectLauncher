@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace SPL.Editor
@@ -8,43 +7,25 @@ namespace SPL.Editor
     public class Settings : ScriptableObject
     {
         public bool NeedOpenSceneOnStart;
-        public SceneName StartSceneName;
+        public Scene StartScene;
 
         public bool NeedOpenSceneOnStop;
-        public SceneName StopSceneName;
-
-        public Scene StartScene;
         public Scene StopScene;
+
         public List<Scene> AllScenes;
-        public bool NeedRefresh;
 
-        public void ResetSceneNames()
+        public void SelectStartScene(int newIndex) =>
+            StartScene = Scene(newIndex);
+
+        public void SelectStopScene(int newIndex) =>
+            StopScene = Scene(newIndex);
+
+        private Scene Scene(int newIndex)
         {
-            StartSceneName = 0;
-            StopSceneName = 0;
-        }
+            if (AllScenes.Count <= newIndex)
+                return newIndex == 0 ? default : AllScenes[0];
 
-        public void UpdateStartScene(SceneName sceneName)
-        {
-            StartScene = GetScene(sceneName);
-        }
-
-        public void UpdateStopScene(SceneName sceneName)
-        {
-            StopScene = GetScene(sceneName);
-        }
-
-        private Scene GetScene(SceneName sceneName)
-        {
-            if (AllScenes == null)
-            {
-                return default;
-            }
-
-            foreach (var scene in AllScenes.Where(scene => scene.SceneName == sceneName))
-                return scene;
-
-            return default;
+            return AllScenes[newIndex];
         }
     }
 }

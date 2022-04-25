@@ -13,6 +13,7 @@ namespace SPL.Editor
 
         private static void EditorApplicationOnPlayModeStateChanged(PlayModeStateChange playModeStateChange)
         {
+            SettingsConfigurator.Configure();
             Settings settings = SettingsLocator.Settings;
 
             switch (playModeStateChange)

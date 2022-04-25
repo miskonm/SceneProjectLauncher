@@ -1,38 +1,76 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEditor;
-using UnityEditor.Callbacks;
 
 namespace SPL.Editor
 {
     public static class SettingsConfigurator
     {
-        public static bool Configure()
+        public static bool Configure(Settings settings = null)
         {
-            Type type = typeof(SceneName);
-
-            if (!TryGetPath(type, out string path))
-                path = CreateFile(type);
+            settings ??= SettingsLocator.Settings;
 
             List<Scene> scenes = GetActiveScenes();
-            string[] newKeys = GenerateKeys(scenes);
+            bool needUpdateSettings = NeedUpdateSettings(scenes, settings);
+            if (needUpdateSettings)
+            {
+                Update(scenes, settings);
+            }
 
-            string inputKeyData = ReadFile(path);
-            string outputKeyData = ReplaceKeys(inputKeyData, newKeys, type, out bool isChanged);
+            return needUpdateSettings;
+        }
 
-            WriteFile(path, outputKeyData);
+        private static bool NeedUpdateSettings(List<Scene> newScenes, Settings settings)
+        {
+            List<Scene> savedScenes = settings.AllScenes;
 
-            SettingsLocator.Settings.NeedRefresh = true;
+            if (savedScenes == null)
+                return true;
 
-            if (!isChanged)
-                UpdateScenesAndSet();
+            if (newScenes.Count != savedScenes.Count)
+                return true;
 
-            AssetDatabase.Refresh();
+            for (int i = 0; i < newScenes.Count; i++)
+            {
+                Scene savedScene = savedScenes[i];
+                Scene newScene = newScenes[i];
 
-            return isChanged;
+                if (savedScene != newScene)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static void Update(List<Scene> scenes, Settings settings)
+        {
+            bool isStartSceneSet = false;
+            bool isStopSceneSet = false;
+            GUID startSceneGuid = settings.StartScene.Guid;
+            GUID stopSceneGuid = settings.StopScene.Guid;
+
+            foreach (Scene newScene in scenes)
+            {
+                if (newScene.Guid == startSceneGuid)
+                {
+                    isStartSceneSet = true;
+                    settings.StartScene = newScene;
+                }
+
+                if (newScene.Guid == stopSceneGuid)
+                {
+                    isStopSceneSet = true;
+                    settings.StopScene = newScene;
+                }
+            }
+
+            settings.AllScenes = scenes;
+
+            if (!isStartSceneSet)
+                settings.SelectStartScene(0);
+
+            if (!isStopSceneSet)
+                settings.SelectStopScene(0);
         }
 
         private static List<Scene> GetActiveScenes()
@@ -51,6 +89,7 @@ namespace SPL.Editor
                     Index = index,
                     Name = GetSceneName(scene),
                     Path = scene.path,
+                    Guid = scene.guid
                 });
 
                 index++;
@@ -61,117 +100,5 @@ namespace SPL.Editor
 
         private static string GetSceneName(EditorBuildSettingsScene scene) =>
             scene.path.Split('/').Last().Replace(".unity", string.Empty);
-
-        private static bool TryGetPath(Type type, out string path)
-        {
-            path = null;
-
-            string[] assets = AssetDatabase.FindAssets($"{type.Name} t:script");
-
-            if (assets.Length <= 0)
-                return false;
-
-            path = AssetDatabase.GUIDToAssetPath(assets.First());
-
-            return true;
-
-        }
-
-        private static string CreateFile(Type type)
-        {
-            string pathToFolder = SettingsLocator.GetPathToScriptsFolder();
-            string enumPath = GetPathToEnumScript(pathToFolder);
-            string enumData = GenerateEnumData();
-
-            WriteFile(enumPath, enumData);
-
-            return enumPath;
-        }
-
-        private static string GetPathToEnumScript(string pathToFolder) =>
-            $"{pathToFolder}{nameof(SceneName)}.cs";
-
-        private static string GenerateEnumData()
-        {
-            string tab = new string(' ', 4);
-            string newData = $"namespace {nameof(SPL)}" + "\n{\n" + $"{tab}public enum " + $"{nameof(SceneName)}" +
-                    $"\n{tab}" + "{" + $"\n{tab}" + "}\n}";
-
-            return newData;
-        }
-
-        private static string[] GenerateKeys(List<Scene> scenes)
-        {
-            int keysCount = scenes.Count;
-            string[] keys = new string[keysCount];
-
-            for (var i = 0; i < keysCount; i++)
-            {
-                Scene scene = scenes[i];
-                keys[i] = $"{scene.Name} = {scene.Index}";
-            }
-
-            return keys;
-        }
-
-        private static string ReplaceKeys(string input, string[] keys, Type keyType, out bool isChanged)
-        {
-            string tab = new string(' ', 4);
-            string doubleTab = $"{tab}{tab}";
-            string newKeys = string.Join($",\n{doubleTab}", keys);
-            string newData = $"enum {keyType.Name}" + $"\n{tab}" + "{" + $"\n{doubleTab}{newKeys}" + $"\n{tab}" + "}";
-
-            Regex regex = new Regex(@"enum\s*" + keyType.Name + @"\s*{(.+?)}", RegexOptions.Singleline);
-            string replaced = regex.Replace(input, newData);
-
-            isChanged = !string.Equals(input, replaced);
-
-            return replaced;
-        }
-
-        private static string ReadFile(string path)
-        {
-            using StreamReader streamReader = new StreamReader(path);
-            string data = streamReader.ReadToEnd();
-
-            return data;
-        }
-
-        private static void WriteFile(string path, string data)
-        {
-            using StreamWriter streamWriter = new StreamWriter(path);
-            streamWriter.Write(data);
-        }
-
-        [DidReloadScripts]
-        private static void UpdateScenesAndSet()
-        {
-            if (EditorApplication.isCompiling || EditorApplication.isUpdating)
-                return;
-            
-            Settings settings = SettingsLocator.Settings;
-
-            if (!settings.NeedRefresh)
-                return;
-
-            settings.NeedRefresh = false;
-
-            List<Scene> scenes = GetActiveScenes();
-            Array enumValues = Enum.GetValues(typeof(SceneName));
-
-            for (int i = 0; i < scenes.Count; i++)
-            {
-                if (enumValues.Length <= i)
-                    break;
-
-                Scene scene = scenes[i];
-                scene.SceneName = (SceneName) enumValues.GetValue(i);
-                scenes[i] = scene;
-            }
-
-            settings.AllScenes = scenes;
-            settings.UpdateStartScene(settings.StartSceneName);
-            settings.UpdateStopScene(settings.StopSceneName);
-        }
     }
 }
